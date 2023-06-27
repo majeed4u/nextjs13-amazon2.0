@@ -1,26 +1,38 @@
 /* eslint-disable react/no-unescaped-entities */
+'use client';
 import Image from 'next/image';
 import React from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 import {
   AiOutlineMenu,
   AiOutlineSearch,
   AiOutlineShoppingCart,
 } from 'react-icons/ai';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { selectItems } from '@/redux/slices/basketSlice';
 
 function Header() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const items = useSelector(selectItems);
   return (
     <header>
       {/* top header */}
       <div className='flex items-center flex-grow gap-2 px-2 py-2 bg-amazon_blue '>
         <div className='flex items-center flex-grow mt-2 sm:flex-grow-0 '>
-          <Image
-            src='https://links.papareact.com/f90'
-            width={150}
-            height={40}
-            alt='header'
-            className='object-contain cursor-pointer '
-          />
+          <Link href='/'>
+            {' '}
+            <Image
+              src='https://links.papareact.com/f90'
+              width={150}
+              height={40}
+              alt='header'
+              className='object-contain cursor-pointer '
+            />
+          </Link>
         </div>
         {/* search */}
         <div className='items-center flex-grow hidden h-10 gap-1 overflow-hidden bg-yellow-400 rounded-md cursor-pointer hover:bg-yellow-500 sm:flex'>
@@ -32,17 +44,25 @@ function Header() {
         </div>
         {/* ?right */}
         <div className='flex items-center space-x-6 text-sm text-white whitespace-nowrap '>
-          <div className=' link'>
-            <p>Hello Majed</p>
+          <div
+            className=' link'
+            onClick={() => {
+              !session ? signIn('google') : signOut();
+            }}
+          >
+            <p>{session ? `Hello, ${session?.user.name}` : 'Sign'}</p>
             <p className='font-extrabold md:text-sm'>Account & Lists</p>
           </div>
           <div className=' link'>
             <p>Return</p>
             <p className='font-extrabold md:text-sm'>& Orders</p>
           </div>
-          <div className='relative flex items-center gap-1 link'>
+          <div
+            className='relative flex items-center gap-1 link'
+            onClick={() => router.push('/checkout')}
+          >
             <span className='absolute flex items-center justify-center w-5 h-5 font-bold text-black bg-yellow-500 rounded-full -top-2 left-5'>
-              4
+              {items.length}
             </span>
             <AiOutlineShoppingCart size={30} />
 

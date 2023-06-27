@@ -1,10 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import formatPrice from '@/helper/CurrencyFormat';
+import { addToBasket } from '@/redux/slices/basketSlice';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
+
 function Product({ id, title, price, description, category, image, rating }) {
+  const dispatch = useDispatch();
+
   const newRating = Array.from({ length: 5 }, (_, i) => {
     const number = i + 0.5;
     return (
@@ -18,6 +23,18 @@ function Product({ id, title, price, description, category, image, rating }) {
     );
   });
   const [hasPrime] = useState(Math.random() < 0.5);
+  const addItemToBasket = () => {
+    const product = {
+      id,
+      title,
+      price,
+      description,
+      category,
+      image,
+      rating,
+    };
+    dispatch(addToBasket(product));
+  };
   return (
     <div className='relative z-30 flex flex-col p-10 m-5 bg-white'>
       <p className='absolute top-2 right-2'>{category}</p>
@@ -43,7 +60,9 @@ function Product({ id, title, price, description, category, image, rating }) {
           <span className='text-sm text-gray-500 '>FREE Next-day Delivery</span>
         </div>
       )}
-      <button className='mt-auto button'>Add to Basket</button>
+      <button onClick={addItemToBasket} className='mt-auto button'>
+        Add to Basket
+      </button>
     </div>
   );
 }

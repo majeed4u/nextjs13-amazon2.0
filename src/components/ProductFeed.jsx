@@ -12,6 +12,7 @@ function ProductFeed() {
     isError,
     isSuccess,
   } = useGetProductsQuery();
+  
 
   return (
     <div className='grid mx-auto grid-flow-dense md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:-mt-52'>

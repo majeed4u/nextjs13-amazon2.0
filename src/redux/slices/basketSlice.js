@@ -1,17 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  basket: [],
+  items: [],
 };
 
 export const basketSlice = createSlice({
   name: 'basket',
   initialState,
   reducers: {
-    addToBasket: (state, action) => {},
+    addToBasket: (state, action) => {
+      state.items = [...state.items, action.payload];
+    },
+    removeFromBasket: (state, action) => {
+      const index = state.items.findIndex(
+        (basketItem) => basketItem.id === action.payload.id
+      );
+      let newBasket = [...state.items];
+      if (index >= 0) {
+        // item exist remove
+        newBasket.splice(index, 1);
+      } else {
+        // item dose not exist
+        console.warn(
+          `can not remove (id: ${action.payload.id} as its not in the basket)`
+        );
+      }
+      state.items = newBasket;
+    },
   },
 });
 
-export const { addToBasket } = basketSlice.actions;
-
+export const { addToBasket, removeFromBasket } = basketSlice.actions;
+export const selectItems = (state) => state.basket.items;
+export const selectTotal = (state) => {
+  return state.basket.items.reduce((total, item) => total + item.price, 0);
+};
 export default basketSlice.reducer;
