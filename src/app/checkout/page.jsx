@@ -4,7 +4,9 @@
 import CheckoutProduct from '@/components/CheckoutProduct';
 import Header from '@/components/Header';
 import formatPrice from '@/helper/CurrencyFormat';
+import getStipePromise from '@/helper/getStripePromise';
 import { selectItems, selectTotal } from '@/redux/slices/basketSlice';
+import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import React from 'react';
@@ -14,7 +16,22 @@ function Checkout() {
   const items = useSelector(selectItems);
   const total = useSelector(selectTotal);
   const { data: session } = useSession();
-  console.log(items);
+  const createCheckoutSession = async (e) => {
+    e.preventDefault();
+    const stripe = await getStipePromise();
+    const response = await axios.post('/api/checkout-sessions', {
+      items,
+      email: session.user.email,
+    });
+    const data = await response.data;
+    console.log(data);
+    const result = await stripe.redirectToCheckout({
+      sessionId: data.id,
+    });
+    if (result.error) {
+      console.log(result.error.message);
+    }
+  };
   return (
     <div className='bg-gray-100 '>
       <Header />
@@ -49,15 +66,19 @@ function Checkout() {
                 Subtotal ({items.length}items):{' '}
                 <span className='font-bold '>{formatPrice(total)}</span>
               </h2>
-              <button
-                className={`button w-full mt-2 ${
-                  !session &&
-                  'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'
-                }`}
-                disabled={!session}
-              >
-                {!session ? 'Sign in to checkout' : 'Proceed to checkout'}
-              </button>
+              <form onSubmit={createCheckoutSession}>
+                <button
+                  role='link'
+                  type='submit'
+                  className={`button w-full mt-2 ${
+                    !session &&
+                    'from-gray-300 to-gray-500 border-gray-200 text-gray-300 cursor-not-allowed'
+                  }`}
+                  disabled={!session}
+                >
+                  {!session ? 'Sign in to checkout' : 'Proceed to checkout'}
+                </button>
+              </form>
             </>
           )}
         </div>

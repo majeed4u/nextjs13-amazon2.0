@@ -2,6 +2,7 @@ import './globals.css';
 import StoreProvider from '../redux/StoreProvider';
 import { Inter } from 'next/font/google';
 import AuthProvider from '@/helper/AuthProvider';
+import PersistGateProvider from '@/redux/PersistGateProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,7 +16,9 @@ export default function RootLayout({ children, session }) {
     <html lang='en'>
       <body className={inter.className}>
         <AuthProvider session={session}>
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            <PersistGateProvider>{children}</PersistGateProvider>
+          </StoreProvider>
         </AuthProvider>
       </body>
     </html>

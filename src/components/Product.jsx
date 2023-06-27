@@ -56,7 +56,11 @@ function Product({ id, title, price, description, category, image, rating }) {
       <span className='mb-5 '>{formatPrice(price)}</span>
       {hasPrime && (
         <div className='flex items-center -mt-5 space-x-2'>
-          <img src='/images/prime.png' alt='prime' className='w-12 ' />
+          <img
+            src='https://www.nicepng.com/png/detail/115-1159983_amazon-prime-logo-prime-amazon.png'
+            alt='prime'
+            className='w-20 '
+          />
           <span className='text-sm text-gray-500 '>FREE Next-day Delivery</span>
         </div>
       )}
